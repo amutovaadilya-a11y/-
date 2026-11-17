@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827"><title>Мои долги</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#152236;--panel2:#203149;--line:#30435c;--txt:#f4f7fb;--muted:#9eafc4;--green:#75e2b5;--red:#ff9292}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#192d42,#0b1220 55%);color:var(--txt);font:16px system-ui,sans-serif;min-height:100vh}.wrap{max-width:650px;margin:auto;padding:18px 14px 40px}.top{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 18px}.brand{font-size:25px;font-weight:850}.muted{color:var(--muted);font-size:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}.total{background:linear-gradient(130deg,#1d4548,#1c344b);border-color:#376265}.total small{color:#c1dfd7}.total strong{display:block;font-size:34px;margin:5px 0}.stats{display:flex;gap:10px;margin-top:12px}.stats div{background:#ffffff12;border-radius:12px;padding:9px 12px;flex:1}.stats span{display:block;font-size:11px;color:#c1dfd7}.stats b{font-size:17px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 12px}.row{display:flex;gap:9px}.row>*{min-width:0;flex:1}input{width:100%;background:#0d1726;border:1px solid #3a4c65;border-radius:11px;padding:12px;color:var(--txt);font:inherit;outline:none;margin-bottom:9px}input:focus{border-color:var(--green)}button{border:0;border-radius:11px;padding:11px 13px;font-weight:750;font-size:13px;cursor:pointer}.primary{background:var(--green);color:#092018;width:100%}.secondary{background:var(--panel2);color:var(--txt)}.danger{background:#4a2a35;color:#ffb4b4}.google{background:#fff;color:#222;width:100%;font-size:15px}.person{display:flex;gap:10px;align-items:center}.avatar{width:42px;height:42px;border-radius:14px;background:#29465a;display:grid;place-items:center;color:#b9e7d8;font-weight:800;flex:none}.info{flex:1;min-width:0}.name{font-weight:800;overflow-wrap:anywhere}.amount{font-weight:850;text-align:right;white-space:nowrap}.amount small{display:block;color:var(--muted);font-weight:400;font-size:10px}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px}.mini{padding:8px 10px;background:var(--panel2);color:var(--txt)}.mini.green{color:var(--green)}.mini.red{color:var(--red)}.personbox{margin-bottom:10px}.empty{text-align:center;color:var(--muted);padding:25px}.status{font-size:12px;color:var(--muted);text-align:right}.hidden{display:none!important}.history{font-size:12px;border-bottom:1px solid var(--line);padding:9px 0;display:flex;justify-content:space-between;gap:8px}.history:last-child{border:0}.modal{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;padding:12px}.modal.show{display:flex}.sheet{background:#17263a;border:1px solid var(--line);border-radius:20px;padding:17px;width:100%;max-width:580px}.sheetbuttons{display:flex;gap:8px}.sheetbuttons button{flex:1}.hint{font-size:12px;line-height:1.5;color:var(--muted)}.topbtn{background:#243a50;color:var(--txt);font-size:12px}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div><div class="brand">Мои долги</div><div class="muted">Личный учёт · суммы в сомах</div></div><button id="logout" class="topbtn hidden">Выйти</button></header>
+<section id="loginCard" class="card">
+<h2>Вход в аккаунт</h2><p class="muted">Войди через Google, чтобы сохранять свои записи в облаке и открывать их на других устройствах.</p>
+<button id="login" class="google">G&nbsp; Продолжить с Google</button>
+<p id="loginMsg" class="hint">Для работы входа владелец приложения должен сначала подключить Firebase и разместить приложение на защищённом HTTPS-сайте.</p>
+</section>
+<section id="app" class="hidden">
+<div class="status" id="status">Ожидание входа…</div>
+<section class="card total"><div class="muted">Общая сумма долгов</div><strong id="total">0 сом</strong><small>Сколько все люди должны тебе</small><div class="stats"><div><span>Людей</span><b id="count">0</b></div><div><span>Операций</span><b id="ops">0</b></div></div></section>
+<section class="card"><h3>＋ Добавить человека</h3><input id="newName" placeholder="Имя человека" maxlength="50"><div class="row"><input id="newAmount" type="number" min="0" step=".01" placeholder="Сумма, сом"><input id="newNote" placeholder="Заметка (необязательно)" maxlength="80"></div><button class="primary" id="add">Добавить</button></section>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:20px 2px 10px"><h2 style="margin:0">Список людей</h2><span class="muted" id="peopleLabel"></span></div>
+<input id="search" placeholder="⌕ Найти по имени">
+<div id="people"></div>
+<section class="card"><h2>История операций</h2><div id="history" class="hint">История пока пустая.</div></section>
+<section class="card"><h3>Резервная копия</h3><div class="row"><button class="secondary" id="export">Скачать копию</button><button class="secondary" id="import">Восстановить копию</button><input type="file" id="file" accept="application/json" class="hidden"></div><p class="hint">Облако синхронизирует данные, но резервная копия — дополнительная защита.</p></section>
+</section>
+<p class="hint" style="text-align:center;margin-top:20px">Не передавай никому пароль от Google. Облачные записи доступны только в твоём аккаунте.</p>
+</main>
+<div id="modal" class="modal"><div class="sheet"><h3 id="modalTitle">Изменить запись</h3><input id="editName" placeholder="Имя"><input id="editAmount" type="number" min="0" step=".01" placeholder="Сумма, сом"><input id="editNote" placeholder="Заметка"><div class="sheetbuttons"><button id="cancel" class="secondary">Отмена</button><button id="save" class="primary">Сохранить</button></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+// ШАГ НАСТРОЙКИ: замени значения ниже на конфигурацию своего Firebase-проекта.
+const firebaseConfig = {
+  apiKey: "AIzaSyAlnOXQ0vUgzgJKlu-Ziz8wNnIiQuvew80",
+  authDomain: "dolgi-39037.firebaseapp.com",
+  projectId: "dolgi-39037",
+  storageBucket: "dolgi-39037.firebasestorage.app",
+  messagingSenderId: "708123652480",
+  appId: "1:708123652480:web:1c9b2cd9fe8d293010d165",
+  measurementId: "G-G91CLTN7DJ"
+};
+const configured = !Object.values(firebaseConfig).some(v=>String(v).startsWith("ВСТАВЬ"));
+const $=id=>document.getElementById(id), money=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(n)||0)+' сом';
+let auth=null,db=null,user=null,people=[],history=[],editing=null,saveTimer=null,unsubscribe=null;
+const localKey='my-debts-cache-v1';
+function setStatus(s){$('status').textContent=s}
+function localSave(){if(user)localStorage.setItem(localKey+user.uid,JSON.stringify({people,history}))}
+function loadLocal(){try{const d=JSON.parse(localStorage.getItem(localKey+user.uid)||'{}');people=Array.isArray(d.people)?d.people:[];history=Array.isArray(d.history)?d.history:[]}catch{people=[];history=[]}}
+function addHistory(action,name,detail){history.unshift({action,name,detail,date:new Date().toLocaleString('ru-RU')});history=history.slice(0,150)}
+function queueSave(){localSave();render();setStatus('Сохранение…');clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{if(!user||!db)return;try{await db.collection('users').doc(user.uid).set({people,history,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});setStatus('Синхронизировано с облаком')}catch(e){setStatus('Нет связи — сохранено на этом телефоне');console.error(e)}},500)}
+async function cloudLoad(){if(!db||!user)return;try{const snap=await db.collection('users').doc(user.uid).get();if(snap.exists){const d=snap.data();people=Array.isArray(d.people)?d.people:[];history=Array.isArray(d.history)?d.history:[]}else{loadLocal();await db.collection('users').doc(user.uid).set({people,history,updatedAt:firebase.firestore.FieldValue.serverTimestamp()})}localSave();render();setStatus('Синхронизировано с облаком')}catch(e){loadLocal();render();setStatus('Не удалось загрузить облако. Локальная копия открыта.');console.error(e)}}
+function render(){const total=people.reduce((s,p)=>s+(Number(p.amount)||0),0);$('total').textContent=money(total);$('count').textContent=people.length;$('ops').textContent=history.length;$('peopleLabel').textContent=people.length+' чел.';const root=$('people');root.innerHTML='';const q=$('search').value.trim().toLowerCase();const shown=people.filter(p=>p.name.toLowerCase().includes(q));if(!shown.length){root.innerHTML='<div class="card empty">'+(people.length?'Ничего не найдено.':'Пока никого нет. Добавь первого человека выше.')+'</div>'}
+shown.forEach(p=>{const box=document.createElement('section');box.className='card personbox';const row=document.createElement('div');row.className='person';const av=document.createElement('div');av.className='avatar';av.textContent=p.name.slice(0,1).toUpperCase();const info=document.createElement('div');info.className='info';const nm=document.createElement('div');nm.className='name';nm.textContent=p.name;const note=document.createElement('div');note.className='muted';note.textContent=p.note||'Без заметки';info.append(nm,note);const amount=document.createElement('div');amount.className='amount';amount.textContent=money(p.amount);const sm=document.createElement('small');sm.textContent='долг';amount.append(sm);row.append(av,info,amount);const acts=document.createElement('div');acts.className='actions';[['＋ Сумма','green',()=>addMoney(p.id)],['Вернул','green',()=>returnMoney(p.id)],['Изменить','',()=>editPerson(p.id)],['Удалить','red',()=>deletePerson(p.id)]].forEach(([t,c,fn])=>{const b=document.createElement('button');b.className='mini '+c;b.textContent=t;b.onclick=fn;acts.append(b)});box.append(row,acts);root.append(box)});
+const h=$('history');h.innerHTML='';if(!history.length)h.textContent='История пока пустая.';history.slice(0,30).forEach(x=>{const d=document.createElement('div');d.className='history';const l=document.createElement('span');l.textContent=x.action+' · '+x.name+' · '+x.date;const r=document.createElement('b');r.textContent=x.detail||'';d.append(l,r);h.append(d)})}
+function addMoney(id){const p=people.find(x=>x.id===id);const s=prompt('Сколько добавить к долгу '+p.name+'?');if(s===null)return;const n=Number(s.replace(',','.'));if(!Number.isFinite(n)||n<=0)return alert('Введи сумму больше нуля');p.amount=Number(p.amount)+n;addHistory('Добавлено',p.name,'+'+money(n));queueSave()}
+function returnMoney(id){const p=people.find(x=>x.id===id);const s=prompt('Сколько '+p.name+' вернул? Долг: '+money(p.amount));if(s===null)return;const n=Number(s.replace(',','.'));if(!Number.isFinite(n)||n<=0)return alert('Введи сумму больше нуля');if(n>Number(p.amount))return alert('Возврат не может быть больше текущего долга');p.amount=Number((Number(p.amount)-n).toFixed(2));addHistory('Вернул',p.name,'−'+money(n));queueSave()}
+function editPerson(id){const p=people.find(x=>x.id===id);editing=id;$('editName').value=p.name;$('editAmount').value=p.amount;$('editNote').value=p.note||'';$('modal').classList.add('show')}
+function deletePerson(id){const p=people.find(x=>x.id===id);if(confirm('Удалить '+p.name+'?')){addHistory('Удалён',p.name,money(p.amount));people=people.filter(x=>x.id!==id);queueSave()}}
+$('save').onclick=()=>{const p=people.find(x=>x.id===editing),name=$('editName').value.trim(),amount=Number($('editAmount').value);if(!p||!name||!Number.isFinite(amount)||amount<0)return alert('Проверь имя и сумму');const old=p.amount;p.name=name;p.amount=amount;p.note=$('editNote').value.trim();addHistory('Изменён',name,money(old)+' → '+money(amount));$('modal').classList.remove('show');queueSave()};
+$('cancel').onclick=()=>$('modal').classList.remove('show');
+$('add').onclick=()=>{const name=$('newName').value.trim(),amount=Number($('newAmount').value||0);if(!name||!Number.isFinite(amount)||amount<0)return alert('Введи имя и корректную сумму');people.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,amount,note:$('newNote').value.trim()});addHistory('Добавлен',name,money(amount));$('newName').value=$('newAmount').value=$('newNote').value='';queueSave()};
+$('search').oninput=render;
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify({people,history},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='moi-dolgi-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('import').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.people))throw 0;if(confirm('Заменить текущие данные копией?')){people=d.people;history=Array.isArray(d.history)?d.history:[];queueSave()}}catch{alert('Не удалось прочитать копию')}e.target.value=''};
+function showApp(){ $('loginCard').classList.add('hidden');$('app').classList.remove('hidden');$('logout').classList.remove('hidden')}
+function initFirebase(){if(!configured){$('login').disabled=true;$('loginMsg').textContent='Firebase ещё не подключён. Нужны настройки проекта. Не отправляй пароль Google.';return}firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(()=>{auth.onAuthStateChanged(async u=>{user=u;if(u){showApp();setStatus('Загрузка облачных данных…');await cloudLoad()}else{$('loginCard').classList.remove('hidden');$('app').classList.add('hidden');$('logout').classList.add('hidden')}})}).catch(e=>{console.error(e);$('loginMsg').textContent='Не удалось включить сохранение входа: '+e.message})}
+$('login').onclick=async()=>{if(!auth)return alert('Сначала подключи Firebase по инструкции.');try{const provider=new firebase.auth.GoogleAuthProvider();await auth.signInWithPopup(provider)}catch(e){alert('Не удалось войти: '+e.message)}};
+$('logout').onclick=async()=>{if(auth)await auth.signOut()};
+initFirebase();
+</script></body></html>
